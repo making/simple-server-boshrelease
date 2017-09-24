@@ -357,6 +357,7 @@ instance_groups:
   - name: router
     release: simple-server
     properties:
+      port: 8080
       servers: ((app-ips))
   instances: 1
   stemcell: trusty
