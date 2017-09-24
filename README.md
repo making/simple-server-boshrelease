@@ -380,3 +380,119 @@ EOF
 ```
 bosh deploy -d simple-server manifest.yml -v app-ips="[10.0.16.30,10.0.16.31]" -v router-ip=10.0.16.40
 ```
+
+
+### link
+
+```
+cat <<EOF > jobs/app/spec
+---
+name: app
+templates:
+  ctl: bin/ctl
+
+provides:
+- name: app
+  type: conn
+  properties:
+  - port
+
+packages:
+- simple-server
+- ruby
+
+properties:
+  port:
+    description: "Port on which server is listening"
+    default: 8080
+EOF
+```
+
+
+
+```
+cat <<EOF > jobs/router/spec
+---
+name: router
+templates:
+  ctl: bin/ctl
+  config.json.erb: config/config.json
+
+consumes:
+- name: app
+  type: conn
+
+packages:
+- simple-server
+- ruby
+
+properties:
+  port:
+    description: "Port on which server is listening"
+    default: 8080
+EOF
+```
+
+
+```
+cat <<EOF > jobs/router/templates/config.json.erb
+{
+  "servers": <%= JSON.dump(link('app').instances.map { |x| x.address }) %>
+}
+EOF
+```
+
+
+```
+cat <<EOF > manifest.yml
+---
+name: simple-server
+
+releases:
+- name: simple-server
+  version: latest
+
+stemcells:
+- os: ubuntu-trusty
+  alias: trusty
+  version: latest
+
+instance_groups:
+- name: app
+  jobs:
+  - name: app
+    release: simple-server
+    properties:
+      port: 8080
+  instances: 2
+  stemcell: trusty
+  azs: [z1]
+  vm_type: default
+  networks:
+  - name: default
+
+- name: router
+  jobs:
+  - name: router
+    release: simple-server
+    properties:
+      port: 8080
+  instances: 1
+  stemcell: trusty
+  azs: [z1]
+  vm_type: default
+  networks:
+  - name: default
+    static_ips: ((router-ip))
+
+update:
+  canaries: 1
+  max_in_flight: 3
+  canary_watch_time: 30000-600000
+  update_watch_time: 5000-600000
+EOF
+```
+
+```
+bosh deploy -d simple-server manifest.yml -v router-ip=10.0.16.40
+```
