@@ -1,1 +1,6 @@
---- {}
+ruby/bundler-1.6.3.gem:
+  size: 293376
+  sha: c8a000f75b6a6f60d9fb727f8076ec9171e14c20
+ruby/ruby-2.1.4.tar.gz:
+  size: 15127418
+  sha: 29e9cfdd9e989b7621d7696ef3f970262a08dbc3

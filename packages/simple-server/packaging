@@ -1,0 +1,6 @@
+set -e
+
+cp -r simple-server/* ${BOSH_INSTALL_TARGET}
+cd ${BOSH_INSTALL_TARGET}
+mkdir -p ${BOSH_INSTALL_TARGET}/gem_home
+/var/vcap/packages/ruby/bin/bundle install --local --no-prune --path ${BOSH_INSTALL_TARGET}/gem_home

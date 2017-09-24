@@ -1,1 +1,6 @@
-name: simple-server-boshrelease
+---
+blobstore:
+  provider: local
+  options:
+    blobstore_path: /tmp/simple-server
+final_name: simple-server

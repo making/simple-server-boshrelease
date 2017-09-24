@@ -1,0 +1,46 @@
+---
+name: simple-server
+
+releases:
+- name: simple-server
+  version: latest
+
+stemcells:
+- os: ubuntu-trusty
+  alias: trusty
+  version: latest
+
+instance_groups:
+- name: app
+  jobs:
+  - name: app
+    release: simple-server
+    properties:
+      port: 8080
+  instances: 2
+  stemcell: trusty
+  azs: [z1]
+  vm_type: default
+  networks:
+  - name: default
+    static_ips: ((app-ips))
+
+- name: router
+  jobs:
+  - name: router
+    release: simple-server
+    properties:
+      servers: ((app-ips))
+  instances: 1
+  stemcell: trusty
+  azs: [z1]
+  vm_type: default
+  networks:
+  - name: default
+    static_ips: ((router-ip))
+
+update:
+  canaries: 1
+  max_in_flight: 3
+  canary_watch_time: 30000-600000
+  update_watch_time: 5000-600000

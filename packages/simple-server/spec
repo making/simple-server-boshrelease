@@ -1,0 +1,8 @@
+---
+name: simple-server
+
+dependencies:
+- ruby
+
+files:
+- simple-server/**/*
