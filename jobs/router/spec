@@ -4,6 +4,10 @@ templates:
   ctl: bin/ctl
   config.json.erb: config/config.json
 
+consumes:
+- name: app
+  type: conn
+
 packages:
 - simple-server
 - ruby
@@ -12,6 +16,3 @@ properties:
   port:
     description: "Port on which server is listening"
     default: 8080
-  servers:
-    description: "List of servers to redirect requests"
-    default: []

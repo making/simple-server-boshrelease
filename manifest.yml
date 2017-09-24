@@ -23,7 +23,6 @@ instance_groups:
   vm_type: default
   networks:
   - name: default
-    static_ips: ((app-ips))
 
 - name: router
   jobs:
@@ -31,7 +30,6 @@ instance_groups:
     release: simple-server
     properties:
       port: 8080
-      servers: ((app-ips))
   instances: 1
   stemcell: trusty
   azs: [z1]
