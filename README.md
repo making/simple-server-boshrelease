@@ -29,7 +29,7 @@ rm -f bundler-1.6.3.gem
 #### spec
 
 ```
-cat <<EOF > packages/ruby/spec
+cat <<"EOF" > packages/ruby/spec
 ---
 name: ruby
 
@@ -44,19 +44,19 @@ EOF
 #### packaging
 
 ```
-cat <<EOF > packages/ruby/packaging
+cat <<"EOF" > packages/ruby/packaging
 set -e
 
 tar xzf ruby/ruby-*.tar.gz
 (
   set -e
   cd ruby-2.1.4
-  LDFLAGS="-Wl,-rpath -Wl,\${BOSH_INSTALL_TARGET}" CFLAGS='-fPIC' ./configure --prefix=\${BOSH_INSTALL_TARGET} --disable-install-doc --with-opt-dir=\${BOSH_INSTALL_TARGET} --without-gmp
+  LDFLAGS="-Wl,-rpath -Wl,${BOSH_INSTALL_TARGET}" CFLAGS='-fPIC' ./configure --prefix=${BOSH_INSTALL_TARGET} --disable-install-doc --with-opt-dir=${BOSH_INSTALL_TARGET} --without-gmp
   make
   make install
 )
 
-\${BOSH_INSTALL_TARGET}/bin/gem install ruby/bundler-1.6.3.gem --local --no-ri --no-rdoc
+${BOSH_INSTALL_TARGET}/bin/gem install ruby/bundler-1.6.3.gem --local --no-ri --no-rdoc
 EOF
 ```
 
@@ -72,7 +72,7 @@ git submodule add https://github.com/making/simple-server.git src/simple-server
 #### spec
 
 ```
-cat <<EOF > packages/simple-server/spec
+cat <<"EOF" > packages/simple-server/spec
 ---
 name: simple-server
 
@@ -87,13 +87,13 @@ EOF
 #### packaging
 
 ```
-cat <<EOF > packages/simple-server/packaging
+cat <<"EOF" > packages/simple-server/packaging
 set -e
 
-cp -r simple-server/* \${BOSH_INSTALL_TARGET}
-cd \${BOSH_INSTALL_TARGET}
-mkdir -p \${BOSH_INSTALL_TARGET}/gem_home
-/var/vcap/packages/ruby/bin/bundle install --local --no-prune --path \${BOSH_INSTALL_TARGET}/gem_home
+cp -r simple-server/* ${BOSH_INSTALL_TARGET}
+cd ${BOSH_INSTALL_TARGET}
+mkdir -p ${BOSH_INSTALL_TARGET}/gem_home
+/var/vcap/packages/ruby/bin/bundle install --local --no-prune --path ${BOSH_INSTALL_TARGET}/gem_home
 EOF
 ```
 
@@ -108,45 +108,45 @@ bosh generate-job app
 #### ctl
 
 ```
-cat <<EOF > jobs/app/templates/ctl
+cat <<"EOF" > jobs/app/templates/ctl
 #!/bin/bash
 
 RUN_DIR=/var/vcap/sys/run/app
 LOG_DIR=/var/vcap/sys/log/app
 
-PIDFILE=\$RUN_DIR/app.pid
+PIDFILE=$RUN_DIR/app.pid
 RUNAS=vcap
 
-export PATH=/var/vcap/packages/ruby/bin:\$PATH
+export PATH=/var/vcap/packages/ruby/bin:$PATH
 export BUNDLE_GEMFILE=/var/vcap/packages/simple-server/Gemfile
 export GEM_HOME=/var/vcap/packages/simple-server/gem_home/ruby/2.1.0
 
 function pid_exists() {
-  ps -p \$1 &> /dev/null
+  ps -p $1 &> /dev/null
 }
 
-case \$1 in
+case $1 in
 
   start)
-    mkdir -p \$RUN_DIR \$LOG_DIR
-    chown -R \$RUNAS:\$RUNAS \$RUN_DIR \$LOG_DIR
+    mkdir -p $RUN_DIR $LOG_DIR
+    chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR
 
-    echo \$\$ > \$PIDFILE
+    echo $$ > $PIDFILE
 
-    exec chpst -u \$RUNAS:\$RUNAS \\
-      bundle exec ruby /var/vcap/packages/simple-server/app.rb \\
-      -p <%= p("port") %> \\
-      -o 0.0.0.0 \\
-      >>\$LOG_DIR/server.stdout.log 2>>\$LOG_DIR/server.stderr.log
+    exec chpst -u $RUNAS:$RUNAS \
+      bundle exec ruby /var/vcap/packages/simple-server/app.rb \
+      -p <%= p("port") %> \
+      -o 0.0.0.0 \
+      >>$LOG_DIR/server.stdout.log 2>>$LOG_DIR/server.stderr.log
     ;;
 
   stop)
-    PID=\$(head -1 \$PIDFILE)
-    if [ ! -z \$PID ] && pid_exists \$PID; then
-      kill \$PID
+    PID=$(head -1 $PIDFILE)
+    if [ ! -z $PID ] && pid_exists $PID; then
+      kill $PID
     fi
-    while [ -e /proc/\$PID ]; do sleep 0.1; done
-    rm -f \$PIDFILE
+    while [ -e /proc/$PID ]; do sleep 0.1; done
+    rm -f $PIDFILE
     ;;
 
   *)
@@ -161,7 +161,7 @@ chmod +x jobs/app/templates/ctl
 #### monit
 
 ```
-cat <<EOF > jobs/app/monit
+cat <<"EOF" > jobs/app/monit
 check process app
   with pidfile /var/vcap/sys/run/app/app.pid
   start program "/var/vcap/jobs/app/bin/ctl start"
@@ -173,7 +173,7 @@ EOF
 #### spec
 
 ```
-cat <<EOF > jobs/app/spec
+cat <<"EOF" > jobs/app/spec
 ---
 name: app
 templates:
@@ -200,47 +200,47 @@ bosh generate-job router
 #### ctl
 
 ```
-cat <<EOF > jobs/router/templates/ctl
+cat <<"EOF" > jobs/router/templates/ctl
 #!/bin/bash
 
 RUN_DIR=/var/vcap/sys/run/router
 LOG_DIR=/var/vcap/sys/log/router
 
-PIDFILE=\$RUN_DIR/router.pid
+PIDFILE=$RUN_DIR/router.pid
 RUNAS=vcap
 
-export PATH=/var/vcap/packages/ruby/bin:\$PATH
+export PATH=/var/vcap/packages/ruby/bin:$PATH
 export BUNDLE_GEMFILE=/var/vcap/packages/simple-server/Gemfile
 export GEM_HOME=/var/vcap/packages/simple-server/gem_home/ruby/2.1.0
 
 function pid_exists() {
-  ps -p \$1 &> /dev/null
+  ps -p $1 &> /dev/null
 }
 
-case \$1 in
+case $1 in
 
   start)
-    mkdir -p \$RUN_DIR \$LOG_DIR
-    chown -R \$RUNAS:\$RUNAS \$RUN_DIR \$LOG_DIR
+    mkdir -p $RUN_DIR $LOG_DIR
+    chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR
 
-    echo \$\$ > \$PIDFILE
+    echo $$ > $PIDFILE
 
     export CONFIG_FILE=/var/vcap/jobs/router/config/config.json
 
-    exec chpst -u \$RUNAS:\$RUNAS \\
-      bundle exec ruby /var/vcap/packages/simple-server/router.rb \\
-      -p <%= p("port") %> \\
-      -o 0.0.0.0 \\
-      >>\$LOG_DIR/server.stdout.log 2>>\$LOG_DIR/server.stderr.log
+    exec chpst -u $RUNAS:$RUNAS \
+      bundle exec ruby /var/vcap/packages/simple-server/router.rb \
+      -p <%= p("port") %> \
+      -o 0.0.0.0 \
+      >>$LOG_DIR/server.stdout.log 2>>$LOG_DIR/server.stderr.log
     ;;
 
   stop)
-    PID=\$(head -1 \$PIDFILE)
-    if [ ! -z \$PID ] && pid_exists \$PID; then
-      kill \$PID
+    PID=$(head -1 $PIDFILE)
+    if [ ! -z $PID ] && pid_exists $PID; then
+      kill $PID
     fi
-    while [ -e /proc/\$PID ]; do sleep 0.1; done
-    rm -f \$PIDFILE
+    while [ -e /proc/$PID ]; do sleep 0.1; done
+    rm -f $PIDFILE
     ;;
 
   *)
@@ -255,7 +255,7 @@ chmod +x jobs/router/templates/ctl
 #### config.json.erb
 
 ```
-cat <<EOF > jobs/router/templates/config.json.erb
+cat <<"EOF" > jobs/router/templates/config.json.erb
 {
   "servers": <%= p("servers") %>
 }
@@ -265,7 +265,7 @@ EOF
 #### monit
 
 ```
-cat <<EOF > jobs/router/monit
+cat <<"EOF" > jobs/router/monit
 check process router
   with pidfile /var/vcap/sys/run/router/router.pid
   start program "/var/vcap/jobs/router/bin/ctl start"
@@ -277,7 +277,7 @@ EOF
 #### spec
 
 ```
-cat <<EOF > jobs/router/spec
+cat <<"EOF" > jobs/router/spec
 ---
 name: router
 templates:
@@ -301,7 +301,7 @@ EOF
 ### config/final.yml
 
 ```
-cat <<EOF > config/final.yml
+cat <<"EOF" > config/final.yml
 ---
 blobstore:
   provider: local
@@ -324,7 +324,7 @@ bosh upload-release /tmp/simple-server-boshrelease.tgz
 
 
 ```
-cat <<EOF > manifest.yml
+cat <<"EOF" > manifest.yml
 ---
 name: simple-server
 
@@ -385,7 +385,7 @@ bosh deploy -d simple-server manifest.yml -v app-ips="[10.0.16.30,10.0.16.31]" -
 ### link
 
 ```
-cat <<EOF > jobs/app/spec
+cat <<"EOF" > jobs/app/spec
 ---
 name: app
 templates:
@@ -411,7 +411,7 @@ EOF
 
 
 ```
-cat <<EOF > jobs/router/spec
+cat <<"EOF" > jobs/router/spec
 ---
 name: router
 templates:
@@ -435,7 +435,7 @@ EOF
 
 
 ```
-cat <<EOF > jobs/router/templates/config.json.erb
+cat <<"EOF" > jobs/router/templates/config.json.erb
 {
   "servers": <%= JSON.dump(link('app').instances.map { |x| x.address }) %>
 }
@@ -444,7 +444,7 @@ EOF
 
 
 ```
-cat <<EOF > manifest.yml
+cat <<"EOF" > manifest.yml
 ---
 name: simple-server
 
