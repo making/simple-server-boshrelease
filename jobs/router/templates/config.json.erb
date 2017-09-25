@@ -1,3 +1,3 @@
 {
-  "servers": <%= JSON.dump(link('app').instances.map { |x| x.address }) %>
+  "servers": <%= JSON.dump(link('app').instances.map { |x| 'http://' + x.address + ':' + link('app').p('port').to_s }) %>
 }
