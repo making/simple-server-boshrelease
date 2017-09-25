@@ -1,6 +1,8 @@
 set -e
+source /var/vcap/packages/ruby-2.4/bosh/compile.env
 
 cp -r simple-server/* ${BOSH_INSTALL_TARGET}
-cd ${BOSH_INSTALL_TARGET}
-mkdir -p ${BOSH_INSTALL_TARGET}/gem_home
-/var/vcap/packages/ruby/bin/bundle install --local --no-prune --path ${BOSH_INSTALL_TARGET}/gem_home
+cp -r simple-server/* ./
+
+bosh_bundle_local
+bosh_generate_runtime_env

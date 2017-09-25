@@ -10,7 +10,7 @@ consumes:
 
 packages:
 - simple-server
-- ruby
+- ruby-2.4
 
 properties:
   port:
