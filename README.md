@@ -358,7 +358,7 @@ instance_groups:
     release: simple-server
     properties:
       port: 8080
-      servers: ((app-ips))
+      servers: ((servers))
   instances: 1
   stemcell: trusty
   azs: [z1]
@@ -378,7 +378,7 @@ EOF
 ### deploy
 
 ```
-bosh deploy -d simple-server manifest.yml -v app-ips="[10.0.16.30,10.0.16.31]" -v router-ip=10.0.16.40
+bosh deploy -d simple-server manifest.yml -v app-ips="[10.0.16.30,10.0.16.31]" -v servers="[http://10.0.16.30:8080,http://10.0.16.31:8080]" -v router-ip=10.0.16.40
 ```
 
 
@@ -437,7 +437,7 @@ EOF
 ```
 cat <<"EOF" > jobs/router/templates/config.json.erb
 {
-  "servers": <%= JSON.dump(link('app').instances.map { |x| x.address }) %>
+  "servers": <%= JSON.dump(link('app').instances.map { |x| 'http://' + x.address + ':' + link('app').p('port').to_s }) %>
 }
 EOF
 ```
