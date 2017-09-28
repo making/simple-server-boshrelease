@@ -496,6 +496,8 @@ EOF
 ```
 
 ```
+bosh create-release --name=simple-server --force --timestamp-version --tarball=/tmp/simple-server-boshrelease.tgz
+bosh upload-release /tmp/simple-server-boshrelease.tgz
 bosh deploy -d simple-server manifest.yml -v router-ip=10.0.16.40
 ```
 
