@@ -2,6 +2,8 @@
 
 Let's create bosh release used in [BOSH Tutorial](http://mariash.github.io/learn-bosh/)!
 
+* [BOSH CLI](https://bosh.io/docs/cli-v2.html) v2.0.36+ is required.
+
 ### init
 
 ```
