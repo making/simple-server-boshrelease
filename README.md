@@ -1,4 +1,4 @@
-## How to crate bosh-release
+## How to create bosh-release
 
 Let's create bosh release used in [BOSH Tutorial](http://mariash.github.io/learn-bosh/)!
 
