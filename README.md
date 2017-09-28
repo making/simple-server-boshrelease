@@ -380,7 +380,7 @@ EOF
 ### deploy
 
 ```
-bosh deploy -d simple-server manifest.yml -v app-ips="[10.0.16.30,10.0.16.31]" -v servers="[http://10.0.16.30:8080,http://10.0.16.31:8080]" -v router-ip=10.0.16.40
+bosh deploy -d simple-server manifest.yml -v app-ips="[10.0.16.30,10.0.16.31]" -v servers="['http://10.0.16.30:8080', 'http://10.0.16.31:8080']" -v router-ip=10.0.16.40
 ```
 
 
