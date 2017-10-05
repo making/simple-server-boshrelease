@@ -1,0 +1,25 @@
+name: simple-server
+version: 0.0.1
+commit_hash: 92a3652
+uncommitted_changes: true
+jobs:
+- name: app
+  version: 5ee6817b416b747fb23e08c2490bfd0fbf882211
+  fingerprint: 5ee6817b416b747fb23e08c2490bfd0fbf882211
+  sha1: d38c71760e3c4cce18b16acdf66a04a8cd4eed18
+- name: router
+  version: 12aca1f9b2c12697cc8d8c3caf0aabea2fe5a772
+  fingerprint: 12aca1f9b2c12697cc8d8c3caf0aabea2fe5a772
+  sha1: 14e502b50dfa023dde2fb50c176095d1f453f84c
+packages:
+- name: ruby-2.4
+  version: cff0ddb99e62cd9dfa146248dcbfd6df2a62a54e
+  fingerprint: cff0ddb99e62cd9dfa146248dcbfd6df2a62a54e
+  sha1: d439cbfc58ea7504e8ecd735b258af2b5d09c17d
+  dependencies: []
+- name: simple-server
+  version: eb510262695cbef25dde26584d5d551e7c6371f5
+  fingerprint: eb510262695cbef25dde26584d5d551e7c6371f5
+  sha1: 6e2af6fc113f98daf370876166346475c3e3f307
+  dependencies:
+  - ruby-2.4
